@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { io } from "socket.io-client";
-import "./participant.css";
+import "./Participant.css";
 
 export default function Participant({ room }) {
   const [socket, setSocket] = useState(null);
