@@ -1,0 +1,58 @@
+.telop-root {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  background: #0b1020;
+  overflow: hidden;
+  font-family: system-ui, sans-serif;
+}
+
+/* お題表示 */
+.question-box {
+  position: absolute;
+  top: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0, 0, 0, 0.7);
+  color: white;
+  padding: 10px 20px;
+  border-radius: 999px;
+  font-size: 26px;
+  z-index: 10;
+}
+
+.question-label {
+  margin-right: 10px;
+  color: #facc15;
+  font-weight: 700;
+}
+
+/* テロップ */
+.telop-item {
+  position: absolute;
+  right: -100%;
+  white-space: nowrap;
+  font-size: 40px;
+  font-weight: 700;
+
+  color: #ffffff;
+  background: rgba(0, 0, 0, 0.55);
+  padding: 8px 16px;
+  border-radius: 12px;
+
+  animation-name: slide;
+  animation-timing-function: linear;
+}
+
+.telop-name {
+  color: #60a5fa;
+}
+
+@keyframes slide {
+  from {
+    transform: translateX(100vw);
+  }
+  to {
+    transform: translateX(-200vw);
+  }
+}

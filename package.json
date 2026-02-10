@@ -1,0 +1,15 @@
+{
+  "name": "typing-event",
+  "private": true,
+  "scripts": {
+    "build": "cd client && npm install && npm run build && rm -rf ../public && mv dist ../public",
+    "start": "node server.js"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "express": "^4.19.2",
+    "socket.io": "^4.7.5"
+  }
+}

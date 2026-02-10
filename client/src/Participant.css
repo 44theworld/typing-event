@@ -1,0 +1,70 @@
+/* 画面全体 */
+.p-root {
+  width: 100vw;
+  height: 100vh;
+  background: #0f172a; /* ダークネイビー */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: system-ui, sans-serif;
+}
+
+/* 中央カード */
+.p-container {
+  width: 100%;
+  max-width: 420px;
+  padding: 24px;
+  background: #020617; /* さらに暗い */
+  border-radius: 16px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* 表示名 */
+.p-name {
+  background: #020617;
+  border: 1px solid #334155;
+  border-radius: 8px;
+  padding: 12px;
+  font-size: 16px;
+  color: #e5e7eb;
+}
+
+.p-name::placeholder {
+  color: #64748b;
+}
+
+/* 本文入力 */
+.p-text {
+  background: #020617;
+  border: 1px solid #334155;
+  border-radius: 10px;
+  padding: 14px;
+  height: 200px;
+  font-size: 20px;
+  line-height: 1.4;
+  color: #e5e7eb;
+  resize: none;
+}
+
+.p-text::placeholder {
+  color: #64748b;
+}
+
+/* 送信ボタン */
+.p-send {
+  margin-top: 8px;
+  padding: 14px;
+  font-size: 18px;
+  font-weight: 600;
+  color: white;
+  background: #2563eb;
+  border: none;
+  border-radius: 10px;
+}
+
+.p-send:disabled {
+  background: #475569;
+}
