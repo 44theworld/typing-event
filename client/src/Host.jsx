@@ -3,13 +3,14 @@ import { io } from "socket.io-client";
 import "./host-telop.css";
 
 const LANES = 5;
-const DURATION = 14; // 秒
+const DURATION = 10; // 秒
 
 // レーン管理（モジュールスコープでOK）
 const laneAvailableAt = Array(LANES).fill(0);
 
 export default function Host({ room }) {
   const [items, setItems] = useState([]);
+  const [questionIndex, setQuestionIndex] = useState(0);
 
   useEffect(() => {
     const socket = io({
@@ -34,12 +35,30 @@ export default function Host({ room }) {
     return () => socket.disconnect();
   }, [room]);
 
+  // ★ お題を2分ごとに切り替える
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setQuestionIndex((prev) => (prev + 1) % QUESTIONS.length);
+    }, QUESTION_INTERVAL);
+
+    return () => clearInterval(timer);
+  }, []);
+
   const handleEnd = (id) => {
     setItems((prev) => prev.filter((i) => i.id !== id));
   };
 
   return (
     <div className="telop-root">
+      {/* ★ お題表示 */}
+      <div className="question-box">
+        <span className="question-label">お題</span>
+        <span className="question-text">
+          {QUESTIONS[questionIndex]}
+        </span>
+      </div>
+
+      {/* テロップ */}
       {items.map((item) => (
         <div
           key={item.id}
@@ -57,30 +76,4 @@ export default function Host({ room }) {
       ))}
     </div>
   );
-}
-
-// ===== レーン割当ロジック =====
-function assignLane() {
-  const now = Date.now();
-
-  // 今すぐ使えるレーン
-  for (let i = 0; i < LANES; i++) {
-    if (laneAvailableAt[i] <= now) {
-      laneAvailableAt[i] = now + DURATION * 1000;
-      return { lane: i, delay: 0 };
-    }
-  }
-
-  // 全部使用中 → 一番早く空くレーン
-  let earliestLane = 0;
-  for (let i = 1; i < LANES; i++) {
-    if (laneAvailableAt[i] < laneAvailableAt[earliestLane]) {
-      earliestLane = i;
-    }
-  }
-
-  const delay = laneAvailableAt[earliestLane] - now;
-  laneAvailableAt[earliestLane] += DURATION * 1000;
-
-  return { lane: earliestLane, delay };
 }
