@@ -9,7 +9,7 @@ export default function Participant({ room }) {
   const [lastSent, setLastSent] = useState(0);
 
   useEffect(() => {
-    const socket = io({
+    const s = io({
       auth: { room },
     });
     setSocket(s);
