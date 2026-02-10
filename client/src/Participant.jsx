@@ -9,7 +9,7 @@ export default function Participant({ room }) {
   const [lastSent, setLastSent] = useState(0);
 
   useEffect(() => {
-    const s = io("http://localhost:3000", {
+    const socket = io({
       auth: { room },
     });
     setSocket(s);

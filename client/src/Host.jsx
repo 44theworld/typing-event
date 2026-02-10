@@ -51,9 +51,10 @@ export default function Host({ room }) {
 
   // socket
   useEffect(() => {
-    const socket = io("http://localhost:3000", {
+    const socket = io({
       auth: { room },
     });
+
 
     socket.on("message", (msg) => {
       setItems((prev) => [
