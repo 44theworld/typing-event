@@ -1,10 +1,12 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { io } from "socket.io-client";
 import "./host-telop.css";
 
 const LANES = 5;
-const DURATION = 10;
-const QUESTION_INTERVAL = 40000;
+const DURATION = 12; // 秒
+
+// 2分ごとにお題変更
+const QUESTION_INTERVAL = 40 * 1000;
 
 const QUESTIONS = [
   "今の気分を一言で表すと？",
@@ -32,7 +34,6 @@ const QUESTIONS = [
   "スマホの待ち受けはどんな感じ？"
 ];
 
-
 // レーン管理（モジュールスコープでOK）
 const laneAvailableAt = Array(LANES).fill(0);
 
@@ -40,13 +41,14 @@ export default function Host({ room }) {
   const [items, setItems] = useState([]);
   const [questionIndex, setQuestionIndex] = useState(0);
 
+  // socket接続
   useEffect(() => {
     const socket = io({
       auth: { room },
     });
 
     socket.on("message", (msg) => {
-      const { lane, delay } = assignLane();
+      const { lane, delay } = assignLane(); // ← 必ず存在する
 
       setItems((prev) => [
         ...prev,
@@ -60,10 +62,12 @@ export default function Host({ room }) {
       ]);
     });
 
-    return () => socket.disconnect();
+    return () => {
+      socket.disconnect();
+    };
   }, [room]);
 
-  // ★ お題を2分ごとに切り替える
+  // お題タイマー
   useEffect(() => {
     const timer = setInterval(() => {
       setQuestionIndex((prev) => (prev + 1) % QUESTIONS.length);
@@ -78,12 +82,10 @@ export default function Host({ room }) {
 
   return (
     <div className="telop-root">
-      {/* ★ お題表示 */}
+      {/* お題表示 */}
       <div className="question-box">
         <span className="question-label">お題</span>
-        <span className="question-text">
-          {QUESTIONS[questionIndex]}
-        </span>
+        <span className="question-text">{QUESTIONS[questionIndex]}</span>
       </div>
 
       {/* テロップ */}
@@ -104,4 +106,30 @@ export default function Host({ room }) {
       ))}
     </div>
   );
+}
+
+// ===== レーン割当ロジック（ここが無いと落ちる）=====
+function assignLane() {
+  const now = Date.now();
+
+  // 今すぐ使えるレーン
+  for (let i = 0; i < LANES; i++) {
+    if (laneAvailableAt[i] <= now) {
+      laneAvailableAt[i] = now + DURATION * 1000;
+      return { lane: i, delay: 0 };
+    }
+  }
+
+  // 全部使用中 → 一番早く空くレーン
+  let earliestLane = 0;
+  for (let i = 1; i < LANES; i++) {
+    if (laneAvailableAt[i] < laneAvailableAt[earliestLane]) {
+      earliestLane = i;
+    }
+  }
+
+  const delay = laneAvailableAt[earliestLane] - now;
+  laneAvailableAt[earliestLane] += DURATION * 1000;
+
+  return { lane: earliestLane, delay };
 }
