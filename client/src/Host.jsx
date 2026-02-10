@@ -3,7 +3,8 @@ import { io } from "socket.io-client";
 import "./host-telop.css";
 
 const LANES = 5;
-const DURATION = 10; // 秒
+const DURATION = 10;
+const QUESTION_INTERVAL = 40000;
 
 const QUESTIONS = [
   "今の気分を一言で表すと？",
